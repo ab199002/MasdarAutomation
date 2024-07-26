@@ -4,18 +4,16 @@
   <parameter name="os" value="chrome"/>
   <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="Tests.LoginPageTest">
+      <class name="Tests.UserAccountCreationTest">
         <methods>
-          <include name="loginTest"/>
           <include name="flushReport"/>
           <include name="tearUp"/>
-          <include name="failedTest"/>
-          <include name="skippedTest"/>
-          <include name="tearDown"/>
           <include name="getResult"/>
+          <include name="tearDown"/>
+          <include name="userAccountCreationTest"/>
           <include name="startReport"/>
         </methods>
-      </class> <!-- Tests.LoginPageTest -->
+      </class> <!-- Tests.UserAccountCreationTest -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

@@ -5,9 +5,12 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -16,6 +19,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -23,7 +27,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.qa.Kafd.factory.DriverFactory;
+
 
 
 
@@ -33,9 +37,13 @@ public class GenericMethods{
 	
 	WebDriver driver;
 	WebDriverWait wait;
+	File file,tfile ;
+	File rename;
+	String currentHandle;
 	public GenericMethods(WebDriver driver)
 	{
 		this.driver = driver;
+		currentHandle = driver.getWindowHandle();
 	}
 	public void WaitUntilElementAppear(By locator)
 	{
@@ -56,7 +64,7 @@ public class GenericMethods{
 	public void typeInput(By locator,String value)
 	{
 		wait
-		 = new WebDriverWait(driver,Duration.ofSeconds(10));
+		 = new WebDriverWait(driver,Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		driver.findElement(locator).sendKeys(value);
 	}
@@ -81,6 +89,37 @@ public class GenericMethods{
 		
 	}
 	
+	public void switchWindow(String type)
+	{
+		if(type.equalsIgnoreCase("TAB"))
+		driver.switchTo().newWindow(WindowType.TAB);
+		else if(type.equalsIgnoreCase("Window"))
+			driver.switchTo().newWindow(WindowType.WINDOW);
+		else
+			System.out.println("No Appropriate Method Found");
+	}
+	
+	public void windowHandles()
+	{
+		Set<String> handles = driver.getWindowHandles();
+		for(String str:handles)
+		{
+			if(!(str.equals(currentHandle)))
+				driver.switchTo().window(str);
+		}
+		
+	}
+	
+	public void swithToLastActiveWindow()
+	{
+		driver.switchTo().window(currentHandle);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void implictWait()
+	{
+		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+	}
 	public By getBy(String locatorType, String locatorValue) {
 		By locator = null;
 		switch (locatorType.toLowerCase()) {
@@ -365,9 +404,14 @@ public class GenericMethods{
 	 * @param locator
 	 * @param timeOut
 	 */
-	public void clickWhenReady(By locator, int timeOut) {
+	public void waitForElementClickable(By locator, int timeOut) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
 		wait.until(ExpectedConditions.elementToBeClickable(locator));
+	}
+	public void clickWhenReady(By locator, int timeOut) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeOut));
+		System.out.println(getElement(locator).isDisplayed());
+		wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
 	}
 
 	/**
@@ -600,6 +644,70 @@ public class GenericMethods{
 		r.keyRelease(KeyEvent.VK_LEFT);
 		r.keyPress(KeyEvent.VK_ENTER);
 		r.keyRelease(KeyEvent.VK_ENTER);
+	}
+	
+	public String renameFile()
+	{
+		//calling for getting exiting file path 
+		List<String> filePaths = getJpgFilePathsFromDirectory(System.getProperty("user.dir")+"\\src\\test\\resources\\TestData");
+		file = new File(filePaths.get(0));
+		// Create an object of the File class 
+        // Replace the file path with path of the directory 
+		String filename = "TestSample_Image_1"+getRandomData()+".jpg";
+        rename = new File(System.getProperty("user.dir")+"\\src\\test\\resources\\TestData\\"+filename); 
+  
+        // store the return value of renameTo() method in 
+        // flag 
+        boolean flag = file.renameTo(rename); 
+  
+        // if renameTo() return true then if block is 
+        // executed 
+        if (flag == true) { 
+            System.out.println("File Successfully Rename"); 
+        } 
+        // if renameTo() return false then else block is 
+        // executed 
+        else { 
+            System.out.println("Operation Failed"); 
+        } 
+        return rename.getAbsolutePath();
+         
+        
+	}
+	public static List<String> getJpgFilePathsFromDirectory(String directoryPath) {
+        List<String> jpgFilePaths = new ArrayList<>();
+
+        // Create a File object for the directory
+        File directory = new File(directoryPath);
+
+        // Check if the directory exists and is indeed a directory
+        if (directory.exists() && directory.isDirectory()) {
+            // List all files and directories inside the directory
+            File[] filesList = directory.listFiles();
+
+            if (filesList != null) {
+                for (File file : filesList) {
+                    // Check if it's a file (not a directory) and has a .jpg extension
+                    if (file.isFile() && file.getName().toLowerCase().endsWith(".jpg")) {
+                        jpgFilePaths.add(file.getAbsolutePath());
+                    }
+                }
+            } else {
+                System.out.println("The directory is empty or an I/O error occurred.");
+            }
+        } else {
+            System.out.println("The path specified is not a directory or does not exist.");
+        }
+
+        return jpgFilePaths;
+    }
+	
+	public void fileUploadBySendKeys(By locator)
+	{
+//		File file = new File(System.getProperty("user.dir")+"\\src\\test\\resources\\TestData\\TestSample_Image_1.jpg");
+		WebElement upload_file = driver.findElement(locator);
+		System.out.println(renameFile());
+		upload_file.sendKeys(renameFile());
 	}
 	
 	public String isFileUploaded(By locator1, By locator2) {

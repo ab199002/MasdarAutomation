@@ -25,7 +25,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class TestBase extends ExtentReport
 {
 	public static WebDriver driver;
-	public static String URL, email,password;
+	public static String URL, email,password,vFname,vLname,vCn,desg,justification;
 	
 	public void selectBrowser(String os) throws IOException
 	{
@@ -70,12 +70,19 @@ public class TestBase extends ExtentReport
 	
 	public void readConfig() throws IOException
 	{
-		FileInputStream inputStream = new FileInputStream("C:\\Users\\Lenovo\\eclipse-workspace\\TheHub\\src\\main\\resources\\App.properties");
+		String path = System.getProperty("user.dir");
+		FileInputStream inputStream = new FileInputStream(path+"\\src\\main\\resources\\App.properties");
 		Properties properties = new Properties();
 		properties.load(inputStream);
 		URL = properties.getProperty("URL");
 		email = properties.getProperty("email");
 		password = properties.getProperty("password");
+		vFname = properties.getProperty("fname");
+		vLname = properties.getProperty("lname");
+		vCn = properties.getProperty("contact");
+		desg = properties.getProperty("desg");
+		justification= properties.getProperty("justification");
+		
 	}
 	
 }

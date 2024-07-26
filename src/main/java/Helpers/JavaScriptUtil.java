@@ -1,5 +1,8 @@
 package Helpers;
 
+import java.awt.datatransfer.StringSelection;
+
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -51,15 +54,22 @@ public class JavaScriptUtil {
 		return js.executeScript("return document.documentElement.innerText;").toString();
 	}
 
-	public void clickElementByJS(WebElement element) {
+	public void clickElementByJS(By locator) {
+		WebElement element = driver.findElement(locator);
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("arguments[0].click();", element);
 	}
 
-	public void sendKeysUsingWithId(String id, String value) {
+	public void sendKeysUsingWithId(By locator) {
+		
+		String value = System.getProperty("user.dir")+"\\src\\test\\resources\\TestData\\TestSample_Image.jpg";
+		System.out.println(value);
+		WebElement element = driver.findElement(locator);
 		JavascriptExecutor js = (JavascriptExecutor) driver;
+		
+		js.executeScript("arguments[0].value='"+ value +"';", element);
 		//document.getElementById('input-email').value = 'gaurav@gmail.com'
-		js.executeScript("document.getElementById('" + id + "').value='" + value + "'");
+		//js.executeScript("document.getElementById('" + id + "').value='" + value + "'");
 	}
 
 	public void scrollPageDown() {
@@ -77,7 +87,8 @@ public class JavaScriptUtil {
 		js.executeScript("window.scrollTo(document.body.scrollHeight, 0)");
 	}
 
-	public void scrollIntoView(WebElement element) {
+	public void scrollIntoView(By locator) {
+		WebElement element = driver.findElement(locator);
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("arguments[0].scrollIntoView(true);", element);
 	}

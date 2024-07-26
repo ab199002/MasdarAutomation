@@ -17,7 +17,7 @@ public class LoginPage extends GenericMethods{
 	By loginPassword = By.name("passwd");
 	By submitBtn = By.id("idSIButton9");
 	By frame = By.xpath("//iframe[@class='player-app-frame']");
-	By homeText = By.xpath("//div[@class='ms-TooltipHost root-218']");
+	By homeText = By.xpath("//div[@class='ms-TooltipHost root-182']");
 	
 	public void enterEmail(String email)
 	{
